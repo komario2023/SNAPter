@@ -1,0 +1,62 @@
+SNAPter - themes and languages (updated 13.11.2026)
+================================
+
+1. Themes (look)
+----------------
+Five color themes are based on a design-system library, each in a light and a dark variant:
+
+  slate       Slate        monochrome, strict           (ds-016-slate)
+  slate-soft  Slate Soft   monochrome, softer corners   (ds-017-slate2)
+  tide        Tide         fresh blue                   (ds-002-tide)
+  sage        Sage         calm green                   (ds-004-sage)
+  rose        Rose         soft rose                    (ds-001-rose)
+
+Files: config\themes\<id>.json
+Each file has "light" and "dark" roles (bg, surface, surface_raised, surface_muted,
+text, text_secondary, text_muted, accent, accent_hover, accent_pressed, accent_soft,
+accent_text, border, border_strong, focus, success, warning, error, overlay)
+and "shape" (radius_sm/md/lg, font_family, control_height).
+Roles are normalized from the CSS custom properties of the design systems.
+Known gap: Rose has no "overlay" role (the app uses its own default).
+Tide's font is Inter; Windows may not have it, so the app falls back to Segoe UI.
+
+Two separate choices, as on websites:
+  - mode:         system (like Windows) / light / dark
+  - color theme:  one of the five above
+
+Own themes: Settings - Appearance - "Create" takes a name and one accent color and writes config\themes\<id>.json
+(all other roles are derived from the accent); the new theme is chosen and shown at once.
+
+Where it applies: settings window, editor toolbar and properties panel, tray menu, the preview pictures of the
+settings, the small window of the self-rebuild is plain Windows. Tray icon color follows the theme or its own choice.
+The region selection overlay stays minimal (dimmed screen, frame, size label), only the frame color may follow the accent.
+
+How the choice is remembered:
+  config\settings.default.json   defaults, never changed by the program
+  config\settings.json           created on the first change, holds only the user's choices
+                                 { "ui": { "language": ..., "theme_mode": ..., "accent_theme": ... } }
+Delete settings.json to return to defaults.
+Also in the tray menu (right-click the icon, "Appearance") and in the settings window.
+
+2. Languages
+------------
+Russian and English are included. All visible texts live in config\i18n\<code>.json
+as flat "key": "text" pairs. The program code contains no user-visible texts.
+
+Choice: "auto" (language of Windows, English if there is no file for it) or a code.
+Missing keys in a language file fall back to English.
+
+Add a language (no code changes needed):
+  1. Copy config\i18n\en.json to config\i18n\<code>.json (for example ja.json, zh.json, de.json).
+  2. Translate the values only. Keep the keys unchanged.
+  3. Set "_meta.code" (same as the file name), "_meta.name" (English name),
+     "_meta.native_name" (name in that language, shown in the menu).
+  4. Restart the program. The language appears in the tray menu "Language".
+Save the file as UTF-8.
+Check: app\publish\Snapter.exe --selftest (reports missing keys per language and checks themes and settings;
+writes logs\selftest.txt). About 660 lines (keys) per language file now.
+
+Keys are grouped by prefix: app, tray, balloon, menu, theme, lang, capture, tools, props, actions, settings, layout, msg,
+tip, ratio, beautify (the ten looks: beautify.style.<id>), profile, autobuild (the words of the self-rebuild window: the script
+reads config\i18n\<code>.json itself, English is its built-in fallback). New features add their keys to every language file;
+the self test shows what is still missing. The product name is written SNAPter in the texts (key app.name).

@@ -1,0 +1,59 @@
+{
+  "id": "slate",
+  "name": "Slate",
+  "description": {
+    "ru": "Монохром, строгая",
+    "en": "Monochrome, strict"
+  },
+  "source": "Design_Systems/ds-016-slate/styles.css",
+  "shape": {
+    "radius_sm": "8px",
+    "radius_md": "10px",
+    "radius_lg": "14px",
+    "font_family": "'Segoe UI', system-ui, sans-serif",
+    "control_height": "40px"
+  },
+  "light": {
+    "bg": "#f8fafc",
+    "surface": "#ffffff",
+    "surface_raised": "#ffffff",
+    "surface_muted": "#f3f4f6",
+    "text": "#111827",
+    "text_secondary": "#6b7280",
+    "text_muted": "#9ca3af",
+    "accent": "#111827",
+    "accent_hover": "#1f2937",
+    "accent_pressed": "#e5e7eb",
+    "accent_soft": "#f3f4f6",
+    "accent_text": "#ffffff",
+    "border": "#e5e7eb",
+    "border_strong": "#d1d5db",
+    "focus": "#4f46e5",
+    "success": "#059669",
+    "warning": "#d97706",
+    "error": "#dc2626",
+    "overlay": "#14213666"
+  },
+  "dark": {
+    "bg": "#0f1117",
+    "surface": "#181b24",
+    "surface_raised": "#181b24",
+    "surface_muted": "#12151c",
+    "text": "#f3f4f6",
+    "text_secondary": "#9ca3af",
+    "text_muted": "#6b7280",
+    "accent": "#f3f4f6",
+    "accent_hover": "#ffffff",
+    "accent_pressed": "#2a3140",
+    "accent_soft": "#2a3140",
+    "accent_text": "#111827",
+    "border": "#2a3140",
+    "border_strong": "#3d4659",
+    "focus": "#818cf8",
+    "success": "#34d399",
+    "warning": "#fbbf24",
+    "error": "#f87171",
+    "overlay": "#0009"
+  },
+  "notes": "Roles are normalized from the design system CSS custom properties (vars resolved). Dark = light tokens + data-theme=dark overrides. Region overlay stays minimal and does not depend on the theme."
+}

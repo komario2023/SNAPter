@@ -1,0 +1,59 @@
+{
+  "id": "rose",
+  "name": "Rose",
+  "description": {
+    "ru": "Мягкая розовая",
+    "en": "Soft rose"
+  },
+  "source": "Design_Systems/ds-001-rose/styles.css",
+  "shape": {
+    "radius_sm": "10px",
+    "radius_md": "16px",
+    "radius_lg": "24px",
+    "font_family": "\"Segoe UI\", Arial, sans-serif",
+    "control_height": "44px"
+  },
+  "light": {
+    "bg": "#ffdce1",
+    "surface": "#fffbf7",
+    "surface_raised": "#fff",
+    "surface_muted": "#f4eee9",
+    "text": "#171c27",
+    "text_secondary": "#59616f",
+    "text_muted": "#59616f",
+    "accent": "#c92d43",
+    "accent_hover": "#a92338",
+    "accent_pressed": "#fff1f2",
+    "accent_soft": "#fff1f2",
+    "accent_text": "#fff",
+    "border": "#e5d7d2",
+    "border_strong": "#a28e8b",
+    "focus": "#97283e",
+    "success": "#18724b",
+    "warning": "#8b4b13",
+    "error": "#b52639",
+    "overlay": null
+  },
+  "dark": {
+    "bg": "#24191e",
+    "surface": "#302329",
+    "surface_raised": "#3a2a32",
+    "surface_muted": "#291e24",
+    "text": "#fff3ef",
+    "text_secondary": "#cfb8c0",
+    "text_muted": "#cfb8c0",
+    "accent": "#f69cae",
+    "accent_hover": "#ffc3cf",
+    "accent_pressed": "#512d3b",
+    "accent_soft": "#512d3b",
+    "accent_text": "#36151f",
+    "border": "#61454f",
+    "border_strong": "#a07e8a",
+    "focus": "#ffd4de",
+    "success": "#a0dabb",
+    "warning": "#f2bd84",
+    "error": "#ffacb8",
+    "overlay": null
+  },
+  "notes": "Roles are normalized from the design system CSS custom properties (vars resolved). Dark = light tokens + data-theme=dark overrides. Region overlay stays minimal and does not depend on the theme."
+}

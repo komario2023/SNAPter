@@ -1,0 +1,59 @@
+{
+  "id": "slate-soft",
+  "name": "Slate Soft",
+  "description": {
+    "ru": "Монохром, мягкие углы",
+    "en": "Monochrome, softer corners"
+  },
+  "source": "Design_Systems/ds-017-slate2/styles.css",
+  "shape": {
+    "radius_sm": "10px",
+    "radius_md": "12px",
+    "radius_lg": "16px",
+    "font_family": "'Segoe UI', system-ui, sans-serif",
+    "control_height": "40px"
+  },
+  "light": {
+    "bg": "#f8fafc",
+    "surface": "#ffffff",
+    "surface_raised": "#ffffff",
+    "surface_muted": "#f9fafb",
+    "text": "#111827",
+    "text_secondary": "#6b7280",
+    "text_muted": "#9ca3af",
+    "accent": "#111827",
+    "accent_hover": "#374151",
+    "accent_pressed": "#f3f4f6",
+    "accent_soft": "#f9fafb",
+    "accent_text": "#ffffff",
+    "border": "#e5e7eb",
+    "border_strong": "#d1d5db",
+    "focus": "#4f46e5",
+    "success": "#059669",
+    "warning": "#ca8a04",
+    "error": "#dc2626",
+    "overlay": "#14213666"
+  },
+  "dark": {
+    "bg": "#0c0e14",
+    "surface": "#161922",
+    "surface_raised": "#161922",
+    "surface_muted": "#101218",
+    "text": "#f9fafb",
+    "text_secondary": "#a1a9b8",
+    "text_muted": "#6b7280",
+    "accent": "#f9fafb",
+    "accent_hover": "#ffffff",
+    "accent_pressed": "#272c38",
+    "accent_soft": "#272c38",
+    "accent_text": "#111827",
+    "border": "#272c38",
+    "border_strong": "#3a4150",
+    "focus": "#a78bfa",
+    "success": "#6ee7b7",
+    "warning": "#fcd34d",
+    "error": "#fca5a5",
+    "overlay": "#0009"
+  },
+  "notes": "Roles are normalized from the design system CSS custom properties (vars resolved). Dark = light tokens + data-theme=dark overrides. Region overlay stays minimal and does not depend on the theme."
+}

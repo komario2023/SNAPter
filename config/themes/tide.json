@@ -1,0 +1,59 @@
+{
+  "id": "tide",
+  "name": "Tide",
+  "description": {
+    "ru": "Свежая синяя",
+    "en": "Fresh blue"
+  },
+  "source": "Design_Systems/ds-002-tide/styles.css",
+  "shape": {
+    "radius_sm": "8px",
+    "radius_md": "12px",
+    "radius_lg": "18px",
+    "font_family": "Inter,'Segoe UI',Arial,sans-serif",
+    "control_height": "40px"
+  },
+  "light": {
+    "bg": "#f2f5f8",
+    "surface": "#fff",
+    "surface_raised": "#fff",
+    "surface_muted": "#f7f9fc",
+    "text": "#172033",
+    "text_secondary": "#536178",
+    "text_muted": "#63718a",
+    "accent": "#245eea",
+    "accent_hover": "#154bc7",
+    "accent_pressed": "#dce7ff",
+    "accent_soft": "#e8efff",
+    "accent_text": "#fff",
+    "border": "#e0e6ee",
+    "border_strong": "#a9b6cc",
+    "focus": "#124bc8",
+    "success": "#087d62",
+    "warning": "#a34e0b",
+    "error": "#b42342",
+    "overlay": "#14213666"
+  },
+  "dark": {
+    "bg": "#0e1726",
+    "surface": "#192437",
+    "surface_raised": "#192437",
+    "surface_muted": "#131e30",
+    "text": "#edf3ff",
+    "text_secondary": "#b5c4da",
+    "text_muted": "#92a3be",
+    "accent": "#82a5ff",
+    "accent_hover": "#a3bcff",
+    "accent_pressed": "#314b73",
+    "accent_soft": "#25395d",
+    "accent_text": "#102344",
+    "border": "#314158",
+    "border_strong": "#64799b",
+    "focus": "#a6c1ff",
+    "success": "#73dfb9",
+    "warning": "#ffc180",
+    "error": "#ff9cb2",
+    "overlay": "#0009"
+  },
+  "notes": "Roles are normalized from the design system CSS custom properties (vars resolved). Dark = light tokens + data-theme=dark overrides. Region overlay stays minimal and does not depend on the theme."
+}

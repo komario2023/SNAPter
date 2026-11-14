@@ -1,0 +1,59 @@
+{
+  "id": "sage",
+  "name": "Sage",
+  "description": {
+    "ru": "Спокойная зелёная",
+    "en": "Calm green"
+  },
+  "source": "Design_Systems/ds-004-sage/styles.css",
+  "shape": {
+    "radius_sm": "8px",
+    "radius_md": "12px",
+    "radius_lg": "18px",
+    "font_family": "'Segoe UI', Arial, sans-serif",
+    "control_height": "40px"
+  },
+  "light": {
+    "bg": "#f3f4f6",
+    "surface": "#ffffff",
+    "surface_raised": "#ffffff",
+    "surface_muted": "#eceef2",
+    "text": "#1a1d21",
+    "text_secondary": "#50565e",
+    "text_muted": "#6b7280",
+    "accent": "#1f9d63",
+    "accent_hover": "#178052",
+    "accent_pressed": "#dde2ea",
+    "accent_soft": "#e6f5ed",
+    "accent_text": "#fff",
+    "border": "#dfe3ea",
+    "border_strong": "#b8c0cc",
+    "focus": "#1f9d63",
+    "success": "#0f7a55",
+    "warning": "#b45309",
+    "error": "#c9372c",
+    "overlay": "#14213666"
+  },
+  "dark": {
+    "bg": "#121417",
+    "surface": "#1c1f24",
+    "surface_raised": "#22262d",
+    "surface_muted": "#161920",
+    "text": "#f3f4f6",
+    "text_secondary": "#b8bec8",
+    "text_muted": "#939aa6",
+    "accent": "#34c27a",
+    "accent_hover": "#4fd992",
+    "accent_pressed": "#303742",
+    "accent_soft": "#1a3d2c",
+    "accent_text": "#08140e",
+    "border": "#2d333d",
+    "border_strong": "#4a5362",
+    "focus": "#6ee7a8",
+    "success": "#5ee0a8",
+    "warning": "#fbbf24",
+    "error": "#ff8a80",
+    "overlay": "#0009"
+  },
+  "notes": "Roles are normalized from the design system CSS custom properties (vars resolved). Dark = light tokens + data-theme=dark overrides. Region overlay stays minimal and does not depend on the theme."
+}

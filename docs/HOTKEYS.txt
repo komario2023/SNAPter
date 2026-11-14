@@ -1,0 +1,57 @@
+SNAPter - all keys in one place
+================================
+
+Where a key can be changed is written after it. Keys marked "fixed" are built into the program (the standard ones: copy, save, undo...).
+A key name in the settings can be a letter, a digit, F1-F12 or the name of any key (Tab, Space, Oem3...). Oem3 is the key left of 1:
+Yo on a Russian keyboard, ` and ~ on an English one.
+
+
+1. Global keys (work everywhere in Windows)
+-------------------------------------------
+Settings, page "Hotkeys". Every action has its own field and an on/off switch.
+  Ctrl+Shift+Alt+R             region (the main one)
+  Ctrl+Shift+Alt+F             the whole screen to a file
+  Ctrl+Shift+Alt+C             the whole screen to the clipboard
+  Ctrl+Shift+Alt+G             record a GIF
+  Ctrl+Shift+Alt+M             record a video
+  Ctrl+Shift+Alt+S             scrolling screenshot
+(these are the defaults; each can be changed or switched off)
+
+
+2. In the editor, while a region is being chosen or edited
+-----------------------------------------------------------
+Can be changed:
+  Tool keys (V A L R O B M T N U E I F S Z)       Settings, page "Editor keys"
+  Preset keys (1 ... 9)                            Settings, page "Editor keys"
+  Switch the profile (Oem3 = Yo / ` by default)    Settings, page "Profiles" (key field and the order of the profiles)
+  Aspect ratio of the region (Tab; with Shift - back)  Settings, page "Aspect ratios" (key field)
+  Move the panels to the next corner inside a big region (Shift+Tab; or CapsLock, Tab, F1, none)
+                                                   Settings, page "Panels for a big region"
+  What Shift, Ctrl, Alt (also the right Ctrl / Shift / Alt) do while drawing and on a tap
+                                                   Settings, page "Modifier keys"
+  What Enter does (alone and with Shift / Ctrl / Alt)  Settings, page "Sizes and snapping"
+  The key that makes a dragged object stick to the axes of others  Settings, page "Sizes and snapping"
+  The key of the tray icon click with Shift         Settings, page "Sizes and snapping" (tray block)
+
+Fixed (standard keys):
+  Esc            step back: the selected object, then the tool, then the whole capture
+  Enter          the action of the Enter key (see above)
+  Ctrl+C         copy the picture          Ctrl+S         save          Ctrl+Shift+S   save as
+  Ctrl+P         pin on the screen         Ctrl+U         upload        Ctrl+B         beautiful screenshot on/off
+  Ctrl+A         the whole screen becomes the region  Ctrl+D         duplicate     Delete / Backspace  delete the selected
+  Ctrl+Z         undo                      Ctrl+Y or Ctrl+Shift+Z      redo
+  [ and ]        the selected object one layer down / up
+  Arrows         move the selected object (or the region) by 1 px, with Shift by 10 px
+  Space          while the region is being drawn: move the whole frame
+  Mouse wheel    thickness / size (with Shift, Ctrl or Alt held - the strength of that key's action)
+
+
+3. The profile key in detail
+-----------------------------
+The key works before the region is drawn, while it is drawn and after, for this capture only (nothing is saved). The profiles go in the order of the
+list on the settings page "Profiles" (Full, Ascetic, Minimal and your own).
+- While you have not changed the order, a capture starts with your saved setup (the profile marked with a dot on that page; when none matches, with the
+  setup as it is saved) and the key goes on down the list: Full, Ascetic, Minimal... and round.
+- Once you change the order on the page (arrows or dragging the name) every capture starts with the FIRST profile of the list, and the key goes down
+  the list from it. Put your own profile at the top to make it the one every capture starts with.
+Inside a text that is being typed, in a field with a number, or in a color field the key is a normal key (it types the character).

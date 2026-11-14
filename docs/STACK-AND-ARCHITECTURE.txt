@@ -1,0 +1,97 @@
+SNAPter - stack and architecture (updated 13.11.2026, the code map is current; the "Verified" part below is the history of 0.2)
+==================================
+
+Chosen stack: C# + .NET 8 (LTS) + WPF, tray through WinForms NotifyIcon.
+No third-party packages in 0.2 (since 0.8: SkiaSharp, only to write WebP).
+
+Why this and not the earlier idea "WPF + SkiaSharp"
+  - WPF draws with retained objects (shapes, text boxes, effects). The future editor needs exactly that:
+    arrows, rectangles, text that stays editable, move/resize/delete, undo. SkiaSharp is not needed;
+    the final image is rendered with RenderTargetBitmap.
+  - Fast start of the overlay (a native window, no browser engine) - important for a hotkey tool.
+  - Windows 10 and 11, per-monitor DPI, small exe (about 150 KB + the .NET 8 Desktop Runtime).
+  - Rejected: Qt/C++ (slower to build, packaging), Tauri/Wails/Electron (HTML overlay latency and size).
+  - The design-system HTML is not reused; only its tokens (colors, radii, fonts) in config\themes.
+
+Requirements: Windows 10/11, .NET 8 Desktop Runtime to run (the SDK 8 or newer to build).
+A self-contained single-file build can be added later for people without .NET.
+
+Code map (app\) - the rule: no .cs file over 800 lines, big classes are split into partial files by meaning
+  Program.cs            entry, single instance (mutex), --selftest, --icon-sheet, --make-icon, --beautify-sheet; calls AutoUpdate
+  AppController.cs      glue: settings, language, theme, hotkeys, tray, capture actions, profiles, recording flows
+  Core.cs               Paths (finds the project root by config\settings.default.json), Log
+  Services\Settings.cs  defaults + config\settings.json overlay (deep merge), patching of the user file
+  Services\I18n.cs      flat JSON texts, English fallback, ResolveCode (auto language)
+  Services\Theme.cs     colors/radius of a theme in light or dark (config\themes), creation of own themes
+  Services\HotkeyManager.cs, HotkeyCaptureHook.cs   RegisterHotKey, Print Screen through a low level hook
+  Services\ScreenCapture.cs  BitBlt with CAPTUREBLT over the virtual screen (real pixels)
+  Services\ImageOutput.cs    clipboard (PNG + bitmap) and file saving
+  Services\Recording.cs      GIF encoder, FFmpeg video, scrolling screenshot
+  Services\Upload.cs         Google Drive upload (OAuth PKCE)
+  Services\Beautifier.cs + BeautifierStyles.cs + BeautifyLook.cs   the beautiful screenshot: background, space, shadow; ELEVEN looks drawn from
+                        parameters (BeautifyLook: base, rotation, frame, bar, text, colors...), the owner's looks and changes (config beautify.looks),
+                        the random generator with its limits (BeautifyRandomOptions: dark on/off, bases, wildness; config beautify.random)
+  Services\ToolStyles.cs     presets and styles of the tools; NotifySound.cs; IconFactory.cs (tray icons, autostart)
+  Services\AutoUpdate.cs     the exe rebuilds itself at the start when the sources changed (see below)
+  Ui\TrayService.cs     tray icon and menu in theme colors; PinWindow.cs; RecorderWindow.cs
+  Ui\RegionOverlay*.cs  the selection window and the editor: main, Drag, Modifiers, PanelUi, Sliders, Selection, Align, Rotate, Fill,
+                        Beautify, TextAndStyles, Misc, Fit (adaptive panels), Preview (panels in the settings window),
+                        Ratio (aspect ratios on Tab)
+  Ui\Annotations*.cs    objects drawn over the picture (arrow, text, shapes, brush, steps, blur...); each builds its own
+                        WPF visual (the same factory feeds the screen and the export)
+  Ui\SettingsWindow*.cs the settings window: main, Pages, MorePages, Extras, FitPage, FitLayout, BeautifyPage, RatioPage, Baseline,
+                        Preview (own title bar, flags, panel preview), Dirty (orange Apply, search, current profile),
+                        Dock + Dock2 (preview pictures next to the settings, or pinned to the right edge), Fonts (own list of fonts), LookEditor (editor of a look)
+  SelfTest*.cs          automatic checks (323): editor driven through the same handlers as mouse and keyboard, fit, ratios, looks
+
+Self-rebuilding exe
+  Program.Main -> AutoUpdate.TryRebuildAndRestart: if the exe stands in app\publish with the sources beside it and the fingerprint
+  of the sources (number of files | newest write time of *.cs, *.csproj, *.manifest, *.ico, *.resx) differs from app\publish\build.stamp,
+  it starts tools\AutoBuild.ps1 (hidden) and exits. The script waits for the exit, shows a small window (words from config\i18n),
+  runs dotnet publish into app\publish, writes the stamp with tools\BuildStamp.ps1 and starts the new exe with --after-build
+  (that flag prevents a loop). A failed build starts the old exe and shows the end of logs\autobuild.log.
+  Switch: startup.auto_rebuild. tools\BootstrapSwap.ps1 was a one-time helper to put the first self-rebuilding build in place
+  while the old exe was still running. Do not build into app\publish while the program runs (the exe is locked).
+
+Aspect ratios (Ui\RegionOverlay.Ratio.cs)
+  Settings ratio.list ("free,16:9,4:3,3:2,1:1,21:9,4:5,A4") and ratio.flip. Tab walks the list (Shift+Tab moves the panels to the next corner); RatioDrag pulls the frame from the
+  anchor to the pointer covering it inside the screen, the orientation follows the hand (hysteresis 0.93..1.08 of dx/dy);
+  RatioResize keeps the ratio for the handles; a finished region without drawings is refitted by Tab (RefitRegion).
+
+Editor design
+  - The screenshot is never changed. Objects (arrows, texts) keep their parameters and can be moved,
+    edited, recolored, deleted. History = snapshots of the object list (undo/redo).
+  - Export: the cropped picture + the objects rendered with RenderTargetBitmap at 96 dpi, 1 unit = 1 pixel.
+  - Panels: tools panel (position from layout.toolbar_position) and colors/size/actions panel
+    (layout.properties_panel_position); placed next to the region, kept inside the screen, moved apart
+    if they would overlap.
+  - New tools (rectangle, ellipse, brush, blur) = a new Annotation class + a button + a switch in "tools".
+
+Test and debug switches (environment variables)
+  SNAPTER_USER_SETTINGS=<path>  use another user settings file (tests)
+  SNAPTER_INSTANCE=<name>       separate single-instance mutex (second copy for tests)
+  SNAPTER_DEBUG=1               extra trace lines in logs\app.log (mouse, keys, editing)
+
+DPI: app.manifest sets PerMonitorV2. The overlay is one window over all monitors, placed with
+SetWindowPos in pixels; a scale transform cancels the window DPI so 1 layout unit = 1 real pixel.
+Tested on 2 monitors at 100%. Mixed scaling (100% + 150%) still has to be tested on such a setup.
+
+Verified (this machine, Windows 11, 2 monitors 1920x1080)
+  - build without warnings, --selftest OK (config, 5 themes x 2 modes, 2 languages x 86 keys,
+    hotkey parser, capture 3840x1080, PNG save and unique names, overlay, clipboard round trip)
+  - launch from the bat, hotkeys registered, fullscreen to file (1920x1080),
+    region overlay opens over both monitors, takes the keyboard focus, Esc closes,
+    drag selection 400x250 + Ctrl+S saved a 400x250 PNG, second start is ignored,
+    config\settings.json overrides hotkeys and theme.
+  - Editor (--selftest, 30 checks): region drag 400x300, two panels do not overlap and stay on screen,
+    arrow drawn (red pixel on its line and at its head, other pixels unchanged), Ctrl+Z / Ctrl+Y,
+    Shift snaps to horizontal, text created, edited again by double click, exported text pixels,
+    moving an arrow by 20 px and undoing it, thickness + and color change visible in the export, Delete.
+  - Real input on a second test instance (real keyboard and mouse events): hotkey opens the overlay,
+    drag selects 600x400, click on the Arrow button of the tools panel, drag an arrow, key T, click,
+    typed "Test", Ctrl+Enter, Ctrl+S: saved a 600x400 PNG with the red arrow and the red text.
+  - The launcher builds the program in a clean copy of the project and starts it.
+  - Not verified by eye: how the tray icon, menu and panels look (colors, spacing), region -> clipboard by
+    hotkey, mixed-DPI monitors, behavior over games and protected windows.
+
+Next: see docs\ROADMAP.txt (publication, more preview pictures, checks on other hardware, postponed items).

@@ -1,0 +1,289 @@
+{
+  "_comment": "Default settings sketch for SNAPter. Only the 'ui' section is read by the stub. User choices are saved to config\\settings.json (created on first change), defaults stay untouched.",
+  "version": 2,
+
+  "ui": {
+    "language": "auto",
+    "theme_mode": "system",
+    "accent_theme": "slate",
+    "tray_click": "region",
+    "tray_icon": "viewfinder",
+    "tray_icon_follow_taskbar": true,
+    "tray_shift_click": "settings",
+    "tray_icon_follow_theme": false,
+    "tray_icon_color": "blue",
+    "tray_icon_ink": "black"
+  },
+
+  "modifiers": {
+    "_comment": "Master switches for Shift / Ctrl / Alt. enabled: everything on or off. while_drawing: the held key acts while a region or shape is drawn. tap: a plain tap acts on the region or the selected object. for_region / for_shapes: which targets. shown_actions: which choices the settings list shows (the others are hidden to keep the list clean).",
+    "default_round_pct": 40,
+    "default_center_pct": 100,
+    "default_constrain_pct": 100,
+    "default_axis_pct": 100,
+    "wheel_step_pct": 5,
+    "enabled": true,
+    "while_drawing": true,
+    "tap": true,
+    "for_region": true,
+    "for_shapes": true,
+    "shown_actions": "none,constrain,center,rounded,axis,double,fill,constrain+center"
+  },
+
+  "after": {
+    "_comment": "What happens after a capture. copy_and_save: saving also copies to the clipboard. open_folder: show the saved file in Explorer. fullscreen_in_editor: 'whole screen' opens the editor with the monitor selected.",
+    "copy_and_save": false,
+    "open_folder": false,
+    "sound": false,
+    "sound_name": "sys:Asterisk",
+    "sound_volume": 100,
+    "notifications": true,
+    "notification_seconds": 3,
+    "open_in_viewer": false,
+    "fullscreen_in_editor": false
+  },
+
+  "editor": {
+    "_comment": "preset_count 2-9 (keys 1-9). shared_color: one color for all tools. step_style: number | upper | lower | roman. arrow_head: triangle | open | dot.",
+    "preset_count": 3,
+    "shared_color": false,
+    "eraser_radius": 6,
+    "rotate_step": 15,
+    "size_min": 4,
+    "size_max": 48,
+    "opacity_min": 20,
+    "pct_brush": "100,50,30",
+    "pct_marker": "100,50,25",
+    "pct_line": "100,50,25",
+    "pct_eraser": "100,50,25",
+    "arrow_panel": true,
+    "step_style": "number",
+    "step_start": 1,
+    "arrow_head": "triangle"
+  },
+
+  "editor_keys": {
+    "_comment": "One key per tool (a letter, a digit or F1-F12). Presets are preset1..preset9.",
+    "select": "V", "arrow": "A", "line": "L", "rectangle": "R", "ellipse": "O", "brush": "B", "marker": "M",
+    "text": "T", "steps": "N", "blur": "U", "eraser": "E", "picker": "I",
+    "preset1": "1", "preset2": "2", "preset3": "3", "preset4": "4", "preset5": "5", "preset6": "6", "preset7": "7", "preset8": "8", "preset9": "9"
+  },
+
+  "ratio": {
+    "_comment": "key: the key that switches the aspect ratio of the region (with Shift: back). Any key name (Tab, Oem3, F2, Q...) or none. list: see the page 'Aspect ratios' of the settings (when it is absent the program's own list is used).",
+    "flip": true,
+    "key": "Tab"
+  },
+
+  "profile_cycle": {
+    "_comment": "In the editor (before, while and after drawing the region) the key switches the profiles one by one, for this capture only. key: the name of a key (Oem3 = the key left of 1: Yo on a Russian keyboard, ` or ~ on an English one; Tab, F2, Q, ...) or none. order: the profiles separated by commas (full, ascetic, minimal and your own); empty = the standard order, a capture starts with the saved setup. When the order is set on the settings page the first profile of it is used when a region is started.",
+    "key": "Oem3",
+    "order": ""
+  },
+
+  "overlay": {
+    "_comment": "Region selection stays minimal and does not depend on theme (dim + frame + size label).",
+    "dim_opacity": 0.45,
+    "frame_color": "accent",
+    "show_size_label": true,
+    "frame_thickness": 2,
+    "handle_size": 9,
+    "dim_color": "#000000",
+    "show_crosshair": false,
+    "show_magnifier": false,
+    "size_label_above": true,
+    "size_label_format": "{w} x {h}",
+    "highlight_selected_region": true
+  },
+
+  "hotkeys": {
+    "region":              { "keys": "Ctrl+Shift+Alt+R", "enabled": true,  "action": "capture.region" },
+    "fullscreen_to_file":  { "keys": "Ctrl+Shift+Alt+F", "enabled": true,  "action": "capture.fullscreen_to_file" },
+    "fullscreen_to_clip":  { "keys": "Ctrl+Shift+Alt+C", "enabled": true,  "action": "capture.fullscreen_to_clip" },
+    "region_to_clip":      { "keys": "Ctrl+Shift+Alt+V", "enabled": false, "action": "capture.region_to_clip" },
+    "region_delay":        { "keys": "Ctrl+Shift+Alt+D", "enabled": false, "action": "capture.region_delay" },
+    "repeat_last":         { "keys": "Ctrl+Shift+Alt+L", "enabled": false, "action": "capture.repeat_last" },
+    "record_gif":          { "keys": "Ctrl+Shift+Alt+G", "enabled": true,  "action": "capture.record_gif" },
+    "record_video":        { "keys": "Ctrl+Shift+Alt+M", "enabled": true,  "action": "capture.record_video" },
+    "scroll_capture":      { "keys": "Ctrl+Shift+Alt+S", "enabled": true,  "action": "capture.scroll" }
+  },
+
+  "enter_actions": {
+    "_comment": "What Enter does in the editor, by the held key: none (Enter alone), shift, ctrl, alt, ctrl+shift... Actions: save (no dialog), save_as (dialog), pin, copy, upload, close, none. Ctrl+C always copies.",
+    "none": "save",
+    "shift": "save_as",
+    "ctrl": "pin"
+  },
+
+  "snap": {
+    "_comment": "Hold the key while dragging an object (or placing a numbered step): it sticks to the vertical or horizontal axis of another object when it is closer than threshold_px; drag further and it comes off. key: right_alt | right_ctrl | right_shift | left_alt | left_ctrl | left_shift.",
+    "enabled": true,
+    "key": "right_alt",
+    "threshold_px": 10,
+    "show_guides": true
+  },
+
+  "record": {
+    "_comment": "Recording of the screen. folder: empty = the screenshots folder. show_frame: a frame with a timer and a Stop button around the recorded area. gif: a built-in encoder. video: FFmpeg (ffmpeg_path empty = look in PATH and the usual folders).",
+    "folder": "",
+    "show_frame": true,
+    "editor_buttons": true,
+    "gif": {
+      "fps": 10, "max_seconds": 15, "scale_pct": 100, "colors": 256, "dither": true, "loop": 0,
+      "cursor": true, "countdown_seconds": 3, "merge_identical_frames": true, "copy_file_to_clipboard": true
+    },
+    "video": {
+      "ffmpeg_path": "", "fps": 30, "codec": "libx264", "preset": "veryfast", "rate_mode": "crf", "crf": 23,
+      "bitrate_kbps": 6000, "maxrate_kbps": 0, "scale_pct": 100, "pixel_format": "yuv420p", "cursor": true,
+      "audio": "none", "audio_device": "", "max_seconds": 0, "countdown_seconds": 3, "extra_args": "",
+      "copy_file_to_clipboard": true
+    }
+  },
+
+  "scroll": {
+    "_comment": "Scrolling screenshot: the program scrolls the area with the mouse wheel, takes the pieces and joins them. delay_ms: pause after each scroll. wheel_notches: how far one scroll goes. skip_top_px / skip_bottom_px: fixed header and footer of the page that do not scroll. tolerance_pct: how many rows of the overlap may differ.",
+    "delay_ms": 350, "wheel_notches": 3, "max_height_px": 20000, "max_frames": 80, "skip_top_px": 0, "skip_bottom_px": 0,
+    "tolerance_pct": 3, "start_delay_ms": 800, "copy_to_clipboard": true, "save_file": true, "show_result": false
+  },
+
+  "capture": {
+    "_comment": "delay_seconds: pause for 'region after a delay'. window_snap: a plain click on a window selects the whole window.",
+    "delay_seconds": 3,
+    "window_snap": true,
+    "include_cursor": false,
+    "fixed_size": ""
+  },
+
+  "upload": {
+    "_comment": "target: none | folder | gdrive. folder: a normal folder, for example the one that Google Drive for desktop synchronizes. gdrive: Google Drive API (create an OAuth client of type Desktop app in Google Cloud Console, enable Google Drive API, paste client_id and client_secret in the USER file config\\settings.json - never in a public repository). The program sees only the folder and files it created itself (scope drive.file).",
+    "target": "none",
+    "folder_path": "",
+    "copy_link": true,
+    "auto_after_save": false,
+    "gdrive": {
+      "client_id": "",
+      "client_secret": "",
+      "folder_name": "SNAPter",
+      "folder_id": "",
+      "public_link": true
+    }
+  },
+
+  "text": {
+    "_comment": "neural_safe: a plate under text is drawn as an outline instead (a plate can be mistaken for an interface element by a neural network).",
+    "neural_safe": false,
+    "all_caps": false,
+    "font": "Segoe UI",
+    "bold": true,
+    "italic": false,
+    "align": "left",
+    "plate_color": "auto",
+    "plate_opacity": 80,
+    "outline_width": 0.2
+  },
+
+  "modifier_actions": {
+    "_comment": "What the held Shift / Ctrl / Alt combination does while drawing or selecting a region. Actions, comma separated: constrain (square, circle, 45 degree lines), center (draw from the center), rounded (rounded rectangle), axis (horizontal or vertical only), double (arrow with two heads), fill (toggle fill), none.",
+    "shift": "constrain",
+    "ctrl": "rounded",
+    "alt": "center",
+    "ctrl+shift": "axis",
+    "ctrl+alt": "double",
+    "shift+alt": "fill",
+    "ctrl+shift+alt": "constrain,center"
+  },
+
+  "modules": {
+    "tray_icon": true,
+    "region_capture": true,
+    "fullscreen_capture": true,
+    "editor": true,
+    "region_highlight_on_select": true,
+    "size_label_near_region": true
+  },
+
+  "tools": {
+    "arrow": true,
+    "line": true,
+    "rectangle": true,
+    "ellipse": true,
+    "brush": true,
+    "marker": true,
+    "text": true,
+    "blur": true,
+    "steps": true,
+    "fill": true,
+    "spotlight": true,
+    "magnifier": true,
+    "eraser": true,
+    "picker": true
+  },
+
+  "tool_defaults": {
+    "color": "#E5322D",
+    "fill_color": null,
+    "thickness": 4,
+    "text_size": 18
+  },
+
+  "beautify": {
+    "_comment": "Beautiful screenshot: the finished picture is put on a background with space around it, rounded corners and a shadow. enabled = on for every capture (the Beautiful button or Ctrl+B in the editor switches it for one capture). background: gradient | solid | transparent. preset: ocean | sunset | forest | graphite | paper | custom (custom uses color1 and color2).",
+    "enabled": false,
+    "background": "gradient",
+    "preset": "ocean",
+    "color1": "#667EEA",
+    "color2": "#764BA2",
+    "padding": 48,
+    "radius": 14,
+    "shadow": true,
+    "shadow_blur": 28,
+    "shadow_opacity": 40
+  },
+
+  "layout": {
+    "toolbar_position": "right",
+    "properties_panel_position": "bottom",
+    "button_size": "medium",
+    "button_px": 0,
+    "button_gap": 2,
+    "icon_fill": 0,
+    "panel_pad": 4,
+    "tool_panel": { "fill": true, "opacity": 100, "border": true, "radius": -1, "shadow": true },
+    "props_panel": { "fill": true, "opacity": 100, "border": true, "radius": -1, "shadow": true },
+    "tool_labels": false,
+    "tool_order": "",
+    "panels_draggable": false,
+    "_fit_comment": "When the region is big and the panels do not fit outside it: fit_enabled turns the adaptive layout on; fit_shrink lets the panels shrink down to fit_min_scale percent; fit_hide hides the groups listed in fit_hide_items (recent, presets, colors, shape, sliders, extra, actions2) when it is still too tight; fit_fallback = inside (panels go inside the region, corner_key moves them from corner to corner) or clamp (the old behaviour). props_layout: groups of the bottom panel (presets, colors, recent, shape, sliders, extra, actions, actions2, close), a vertical bar starts a new line; the program merges lines or wraps them as needed. corner_key: Shift+Tab | CapsLock | Tab | F1 | none. start_corner: bottom_right | bottom_left | top_left | top_right.",
+    "fit_enabled": true,
+    "fit_shrink": true,
+    "fit_min_scale": 70,
+    "fit_hide": true,
+    "fit_hide_items": "recent,actions2",
+    "fit_fallback": "inside",
+    "props_layout": "presets,colors,recent,shape,sliders,extra|copy,save,actions2,close",
+    "props_mode": "shared",
+    "profile_layouts": {},
+    "corner_key": "Shift+Tab",
+    "start_corner": "bottom_right"
+  },
+
+  "output": {
+    "save_folder": "%USERPROFILE%\\Pictures\\SNAPter",
+    "file_name_template": "SNAPter_{yyyy-MM-dd}_{HH-mm-ss}",
+    "format": "png",
+    "_comment_format": "format: png | jpg | webp | bmp. fullscreen_format: same | png | jpg | webp | bmp (the format of 'whole screen to file'). Quality: jpg_quality 10-100, webp_quality 1-100, webp_lossless true/false.",
+    "subfolder_template": "",
+    "jpg_quality": 92,
+    "webp_quality": 85,
+    "webp_lossless": false,
+    "fullscreen_format": "same",
+    "fullscreen_scope": "cursor_monitor"
+  },
+
+  "startup": {
+    "run_with_windows": false,
+    "remember_last_tool": true,
+    "remember_last_folder": true,
+    "minimal_ui_mode": false
+  }
+}

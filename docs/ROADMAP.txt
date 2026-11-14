@@ -1,0 +1,28 @@
+SNAPter - roadmap
+=================
+
+Updated 13.11.2026. The detailed status (done / not verified / not done / postponed) is in section 2 of
+"Функционал программы текущий и планируемый.txt".
+
+Stage 0-3 (done, 10.11.2026): skeleton, launcher, five themes (light/dark), Russian + English, prototype 0.1
+  (tray, global hotkeys, capture of all monitors in real pixels, region overlay, clipboard and files).
+Stage 4 (done, 0.2-0.7): editor with objects: arrow, line, rectangle, ellipse, brush, marker, text, steps, blur, eraser, picker;
+  presets, any color, undo/redo, multi-selection and alignment, snapping, Shift/Ctrl/Alt actions with strength, sound after the shot.
+Stage 5 (done): themed bilingual settings window, one JSON file, export/import, base and factory settings, profiles.
+Stage 6 (0.8, done): GIF and video recording, scrolling screenshot, Google Drive upload (started, NOT finished), pin on screen, WebP.
+11-13.11.2026 (done): rotation of text and shapes, text block handles, fill / spotlight / magnifier tools, adaptive panels for a big region,
+  beautiful screenshot, panel preview in the settings window, search in the settings, preview pictures next to the settings,
+  fonts list, editable profiles, justify alignment, thin tool panel with big icons (icon size, gaps, padding),
+  ASPECT RATIOS on Tab with auto-flip, TEN looks of the beautiful screenshot, the exe that rebuilds itself,
+  the product name written as SNAPter.
+
+Product name (decided 11.11.2026): Snapter, written SNAPter in all texts (13.11.2026). The old working title was QuillPane;
+  it was taken by another program. Technical names stay Snapter (folder, Snapter.exe, Snapter.csproj, namespace, mutex).
+  Before a public release the name should still be checked in the Store and on GitHub. Spare Russian name: Скриноша.
+
+Next (not started, see section 2.3 and 18 of the main file)
+  - Publication: README for GitHub (ru/en), license, screenshots, build in Releases.
+  - More preview pictures in the settings (editor keys, presets, capture, saving).
+  - A region of free form (ellipse, rounded, lasso) - postponed by the owner.
+  - Checks on other hardware: Windows 10, monitors with different scaling, games and protected windows.
+  - Postponed by the owner: other upload targets, installer and signing, OCR, QR codes, dragging the file into other windows.

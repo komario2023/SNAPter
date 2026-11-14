@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <AssemblyName>SNAPter</AssemblyName>
+    <RootNamespace>Snapter</RootNamespace>
+    <StartupObject>Snapter.Program</StartupObject>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\assets\Snapter.ico</ApplicationIcon>
+    <SatelliteResourceLanguages>en</SatelliteResourceLanguages>
+    <Version>0.9.4</Version>
+    <Product>SNAPter</Product>
+    <AssemblyTitle>SNAPter</AssemblyTitle>
+    <Description>SNAPter</Description>
+    <Company>SNAPter</Company>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <NoWarn>$(NoWarn);WFAC010</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- SkiaSharp is used only to write WebP (System.Drawing cannot). -->
+    <PackageReference Include="SkiaSharp" Version="4.155.0" />
+  </ItemGroup>
+
+</Project>

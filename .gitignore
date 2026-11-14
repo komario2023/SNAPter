@@ -1,0 +1,31 @@
+# Build output (the finished program goes to Releases as a zip, not into the repository)
+app/bin/
+app/obj/
+app/publish*/
+*.user
+.vs/
+
+# The user's own settings, backups of them and the Google Drive token: personal, never publish
+config/settings.json
+config/settings.backup.json
+config/settings.baseline.json
+config/settings.baseline.backup.json
+config/gdrive.token
+
+# Logs (they can contain window titles and file paths)
+logs/
+
+# A shortcut keeps absolute paths of this computer
+*.lnk
+
+# Spare picture variants (kept on disk, not published): the used ones are 02b and 06-10
+assets/github-avatar.png
+assets/github/01-avatar-light-frame.png
+assets/github/02-avatar-monogram.png
+assets/github/03-avatar-aperture.png
+assets/github/04-avatar-pixels.png
+assets/github/05-avatar-flash.png
+
+# Dead leftover of an old version (starts a script that no longer exists)
+src/hidden-launch.vbs
+assets/Snapter-icon.ico
