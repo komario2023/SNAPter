@@ -243,6 +243,8 @@ namespace Snapter
                 });
             }
 
+            BuildActionKeys(h);   // the shortcuts after a capture: save, save as, copy, undo ...
+
             // ---- tools ----
             StackPanel tl = NewPage(_i.T("settings.tab.tools"));
             tl.Children.Add(Hint(_i.T("settings.tools_hint")));

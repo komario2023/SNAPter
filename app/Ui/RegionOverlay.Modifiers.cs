@@ -341,6 +341,28 @@ namespace Snapter
             }
         }
 
+        /// <summary>One configurable shortcut (settings - Hotkeys): false when the action does not apply now (the key is then left alone).</summary>
+        private bool RunShortcut(string action)
+        {
+            switch (action)
+            {
+                case "save": case "save_as": case "copy": case "pin": case "upload": RunAction(action); return true;
+                case "select_all": SelectAll(); return true;
+            }
+            if (!_editor) return false;   // the rest works in the editor only
+            switch (action)
+            {
+                case "beautify": ToggleBeautify(); return true;
+                case "undo": Undo(); return true;
+                case "redo": Redo(); return true;
+                case "delete": DeleteSelected(); return true;
+                case "duplicate": DuplicateSelected(); return true;
+                case "forward": ReorderSelected(true); return true;
+                case "backward": ReorderSelected(false); return true;
+            }
+            return false;
+        }
+
         private bool HandleKey(Key key, ModifierKeys mods)
         {
             Log.Debug("key " + key + " mods=" + mods + " editing=" + (_editBox != null) + " tool=" + _tool + " items=" + _items.Count);
@@ -362,21 +384,13 @@ namespace Snapter
                 return true;
             }
             if (HandleCornerKey(key)) return true;
-            if (ctrl && key == Key.B && _editor) { ToggleBeautify(); return true; }               // the beautiful screenshot for this capture                  // CapsLock (settings): the panels inside the region go to the next corner
-            if (ctrl && key == Key.C) { DoCopy(); return true; }
             if (key == Key.Enter) { RunEnterAction(mods); return true; }
-            if (ctrl && shift && key == Key.S) { DoSaveAs(); return true; }
-            if (ctrl && key == Key.S) { DoSave(); return true; }
-            if (ctrl && key == Key.P && _hasSel) { DoPin(); return true; }
-            if (ctrl && key == Key.U && _hasSel && UploadService.Enabled(_settings)) { DoUpload(); return true; }
-            if (ctrl && key == Key.A) { SelectAll(); return true; }
+            string actionByKey = ActionForKey(key, mods);   // save, save as, copy, pin, upload: the shortcuts come from the settings
+            if (actionByKey != null && RunShortcut(actionByKey)) { Log.Debug("shortcut -> " + actionByKey); return true; }
             if (_editor)
             {
-                if (ctrl && key == Key.Z) { if (shift) Redo(); else Undo(); return true; }
-                if (ctrl && key == Key.Y) { Redo(); return true; }
-                if (key == Key.Delete || key == Key.Back) { DeleteSelected(); return true; }
-                if (ctrl && key == Key.D) { DuplicateSelected(); return true; }
-                if (!ctrl && (key == Key.OemCloseBrackets || key == Key.OemOpenBrackets)) { ReorderSelected(key == Key.OemCloseBrackets); return true; }
+                if (ctrl && shift && key == Key.Z) { Redo(); return true; }
+                if (key == Key.Back) { DeleteSelected(); return true; }
                 if (!ctrl && _hasSel && _mode == DragMode.None && (key == Key.Left || key == Key.Right || key == Key.Up || key == Key.Down))
                 {
                     // arrows: move the selected object (or the region while nothing is drawn) by 1 px, with Shift by 10 px

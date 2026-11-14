@@ -407,9 +407,10 @@ namespace Snapter
         private void DoSaveAs()
         {
             if (!_hasSel) return;
-            System.Drawing.Bitmap bmp = ExportSelection();
-            System.Drawing.Bitmap copy = new System.Drawing.Bitmap(bmp);
-            bmp.Dispose();
+            Log.Write("save as requested");
+            System.Drawing.Bitmap bmp, copy;
+            try { bmp = ExportSelection(); copy = new System.Drawing.Bitmap(bmp); bmp.Dispose(); }
+            catch (Exception ex) { Log.Write("save as export error: " + ex.Message); return; }
             Action<System.Drawing.Bitmap> h = SaveAsRequested;
             Close();
             Dispatcher.BeginInvoke(new Action(delegate

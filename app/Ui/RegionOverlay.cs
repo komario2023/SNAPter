@@ -325,7 +325,7 @@ namespace Snapter
             _canvas.MouseMove += delegate (object s, MouseEventArgs e) { HandleMove(e.GetPosition(_canvas), Keyboard.Modifiers); };
             _canvas.MouseLeftButtonUp += delegate (object s, MouseButtonEventArgs e) { HandleUp(); };
             _canvas.MouseRightButtonDown += delegate (object s, MouseButtonEventArgs e) { HandleRight(); };
-            KeyDown += delegate (object s, KeyEventArgs e) { if (HandleKey(e.Key, Keyboard.Modifiers)) e.Handled = true; };
+            KeyDown += delegate (object s, KeyEventArgs e) { if (HandleKey(e.Key == Key.System ? e.SystemKey : e.Key, Keyboard.Modifiers)) e.Handled = true; };   // Alt+letter arrives as Key.System
             // Shift / Ctrl / Alt: while a shape is being drawn the effect shows at once (no mouse move needed);
             // a plain tap of the key (nothing else pressed) applies its action to the selected object
             PreviewKeyDown += delegate (object s, KeyEventArgs e)
@@ -376,6 +376,52 @@ namespace Snapter
         // ================= editor keys (settings: editor_keys) =================
         private readonly Dictionary<Key, EditorTool> _toolKeys = new Dictionary<Key, EditorTool>();
         private readonly Dictionary<Key, int> _presetKeys = new Dictionary<Key, int>();
+        // shortcuts of the actions (settings: editor_keys act_*): action -> (modifiers, key)
+        private readonly Dictionary<string, KeyValuePair<ModifierKeys, Key>> _actionKeys = new Dictionary<string, KeyValuePair<ModifierKeys, Key>>();
+        private readonly Dictionary<string, string> _actionKeyText = new Dictionary<string, string>();
+        internal static readonly string[] ActionIds = { "save", "save_as", "copy", "pin", "upload", "beautify", "select_all", "undo", "redo", "delete", "duplicate", "forward", "backward" };
+        internal static readonly string[] ActionDefaults = { "Ctrl+S", "Ctrl+Shift+S", "Ctrl+C", "Ctrl+P", "Ctrl+U", "Ctrl+B", "Ctrl+A", "Ctrl+Z", "Ctrl+Y", "Delete", "Ctrl+D", "]", "[" };
+
+        /// <summary>"Ctrl+Shift+S" -> modifiers and key; false when the text is empty, "none" or not understood.</summary>
+        internal static bool ParseCombo(string text, out ModifierKeys mods, out Key key)
+        {
+            mods = ModifierKeys.None; key = Key.None;
+            if (string.IsNullOrWhiteSpace(text) || text.Trim().Equals("none", StringComparison.OrdinalIgnoreCase)) return false;
+            string[] parts = text.Split('+');
+            for (int i = 0; i < parts.Length - 1; i++)
+            {
+                string p = parts[i].Trim().ToUpperInvariant();
+                if (p == "CTRL" || p == "CONTROL") mods |= ModifierKeys.Control;
+                else if (p == "SHIFT") mods |= ModifierKeys.Shift;
+                else if (p == "ALT") mods |= ModifierKeys.Alt;
+                else return false;
+            }
+            string last = parts[parts.Length - 1].Trim();
+            if (last.Equals("Esc", StringComparison.OrdinalIgnoreCase)) last = "Escape";
+            if (last == "]") { key = Key.OemCloseBrackets; return true; }
+            if (last == "[") { key = Key.OemOpenBrackets; return true; }
+            return ParseKeyName(last, out key);
+        }
+
+        /// <summary>The shortcut of an action as text for tooltips ("Ctrl+S"), empty when the action has no shortcut.</summary>
+        private string ActionKeyText(string action)
+        {
+            string t; return _actionKeyText.TryGetValue(action, out t) ? t : "";
+        }
+
+        private string WithKey(string label, string action)
+        {
+            string t = ActionKeyText(action);
+            return t.Length == 0 ? label : label + " (" + t + ")";
+        }
+
+        private string ActionForKey(Key key, ModifierKeys mods)
+        {
+            ModifierKeys m = mods & (ModifierKeys.Control | ModifierKeys.Shift | ModifierKeys.Alt);
+            foreach (KeyValuePair<string, KeyValuePair<ModifierKeys, Key>> kv in _actionKeys)
+                if (kv.Value.Value == key && kv.Value.Key == m) return kv.Key;
+            return null;
+        }
 
         private static bool TryKey(string s, out Key k)
         {
@@ -399,6 +445,15 @@ namespace Snapter
                 string v; if (!_settings.EditorKeys.TryGetValue(ids[i], out v)) v = defs[i];
                 Key k; if (!TryKey(v, out k)) TryKey(defs[i], out k);
                 _toolKeys[k] = tools[i];
+            }
+            _actionKeys.Clear(); _actionKeyText.Clear();
+            for (int i = 0; i < ActionIds.Length; i++)
+            {
+                string v; if (!_settings.EditorKeys.TryGetValue("act_" + ActionIds[i], out v) || string.IsNullOrWhiteSpace(v)) v = ActionDefaults[i];
+                ModifierKeys am; Key ak;
+                if (!ParseCombo(v, out am, out ak)) continue;   // "none": the action has no shortcut
+                _actionKeys[ActionIds[i]] = new KeyValuePair<ModifierKeys, Key>(am, ak);
+                _actionKeyText[ActionIds[i]] = v.Trim();
             }
             for (int i = 0; i < 9; i++)
             {

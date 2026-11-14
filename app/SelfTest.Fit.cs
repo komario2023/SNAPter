@@ -78,6 +78,9 @@ namespace Snapter
             Check(RegionOverlay.ParseKeyName("Oem3", out pk) && pk == System.Windows.Input.Key.Oem3, "the key name Oem3 (the key left of 1) is understood");
             Check(RegionOverlay.ParseKeyName("Tab", out pk) && pk == System.Windows.Input.Key.Tab && RegionOverlay.ParseKeyName("q", out pk) && pk == System.Windows.Input.Key.Q && RegionOverlay.ParseKeyName("F2", out pk), "other key names are understood (Tab, a letter, F2)");
             Check(!RegionOverlay.ParseKeyName("none", out pk) && !RegionOverlay.ParseKeyName("", out pk), "none means no key");
+            System.Windows.Input.ModifierKeys pm;
+            Check(RegionOverlay.ParseCombo("Ctrl+Shift+S", out pm, out pk) && pk == System.Windows.Input.Key.S && pm == (System.Windows.Input.ModifierKeys.Control | System.Windows.Input.ModifierKeys.Shift), "the shortcut Ctrl+Shift+S (Save as) is understood");
+            Check(RegionOverlay.ParseCombo("Alt+F3", out pm, out pk) && pk == System.Windows.Input.Key.F3 && pm == System.Windows.Input.ModifierKeys.Alt && !RegionOverlay.ParseCombo("none", out pm, out pk), "other shortcuts are understood, none means off");
             Settings fresh = new Settings();
             Check(fresh.ProfileKey == "Oem3" && fresh.RatioKey == "Tab" && fresh.ProfileOrder == "", "the keys of the profiles and of the ratios have their defaults");
             // the bottom panel layout of each profile (the mode "own for each profile")

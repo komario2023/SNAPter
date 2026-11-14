@@ -340,10 +340,11 @@ namespace Snapter
 
         // ---------- messages, sound, what happens after a save ----------
         /// <summary>A message near the clock (settings: after.notifications and after.notification_seconds).</summary>
-        public void Notify(string text, bool always = false)
+        public void Notify(string text, bool always = false, string openPath = null)
         {
             if (_tray == null || (!always && !Settings.NotifyEnabled)) return;
-            _tray.Balloon(I18n.T("app.name"), text, Math.Max(1, Settings.NotifySeconds) * 1000);
+            // openPath: a click on the message opens Explorer with this file selected
+            _tray.Balloon(I18n.T("app.name"), text, Math.Max(1, Settings.NotifySeconds) * 1000, openPath);
         }
 
         private void PlaySound()
@@ -427,7 +428,7 @@ namespace Snapter
                 ov.SaveRequested += delegate (Bitmap bmp)
                 {
                     string path = ImageOutput.Save(bmp, Settings);
-                    Notify(I18n.T("msg.saved_to", path));
+                    Notify(I18n.T("msg.saved_to", path), false, path);
                     Log.Write("region saved " + path);
                     AfterSaved(bmp, path);
                     if (Settings.UploadAuto && UploadService.Enabled(Settings)) UploadBitmap(bmp);
@@ -660,7 +661,7 @@ namespace Snapter
                     Log.Write("scroll capture: " + res.Image.Width + "x" + res.Image.Height + ", pieces " + res.Frames + ", ended: " + res.Why);
                     if (st.ScrollSave) { path = ImageOutput.Save(res.Image, st); Log.Write("scroll saved " + path); }
                     if (st.ScrollCopy) { try { ImageOutput.CopyToClipboard(res.Image); } catch (Exception ex) { Log.Write("scroll copy error: " + ex.Message); } }
-                    Notify(I18n.T("msg.scroll_done", res.Image.Width + "x" + res.Image.Height, res.Frames, res.Why, path ?? ""));
+                    Notify(I18n.T("msg.scroll_done", res.Image.Width + "x" + res.Image.Height, res.Frames, res.Why, path ?? ""), false, path);
                     PlaySound();
                     if (st.ScrollShow)
                     {
@@ -674,105 +675,6 @@ namespace Snapter
         }
 
         // ---------- upload ("cloud") ----------
-        /// <summary>Encodes the picture at once (the caller may dispose it afterwards) and sends it to the chosen target in the background.</summary>
-        public async void UploadBitmap(Bitmap bmp)
-        {
-            if (!UploadService.Enabled(Settings))
-            {
-                Notify(I18n.T("msg.upload_off"));
-                return;
-            }
-            Settings st = Settings;
-            byte[] data; string ext, name;
-            try
-            {
-                data = ImageOutput.Encode(bmp, st, st.Format, out ext);
-                name = ImageOutput.ExpandTemplate(st.FileNameTemplate, DateTime.Now);
-                foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
-                name += "." + ext;
-            }
-            catch (Exception ex) { Fail(ex); return; }
-
-            Notify(I18n.T("msg.uploading", name));
-            UploadResult r = await UploadService.UploadAsync(st, data, name, UploadService.MimeFor(ext));
-            try
-            {
-                if (!r.Ok) { Notify(I18n.T("msg.upload_failed", r.Message), true); return; }
-                string what = !string.IsNullOrEmpty(r.Link) ? r.Link : r.Path;
-                if (st.UploadCopyLink && !string.IsNullOrEmpty(what))
-                {
-                    try { System.Windows.Forms.Clipboard.SetText(what); } catch (Exception ex) { Log.Write("clipboard error: " + ex.Message); }
-                }
-                Notify(I18n.T(!string.IsNullOrEmpty(r.Link) ? "msg.uploaded_link" : "msg.uploaded_path", what));
-                Log.Write("uploaded: " + what);
-            }
-            catch (Exception ex) { Fail(ex); }
-        }
-
-        public bool GDriveSignedIn { get { return new GDriveClient(Settings).SignedIn; } }
-
-        /// <summary>Opens the browser, waits for the sign-in and reports the result as a balloon. Returns an error text or null.</summary>
-        public async Task<string> GDriveSignIn()
-        {
-            try
-            {
-                await new GDriveClient(Settings).SignInAsync(url =>
-                {
-                    Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
-                }, TimeSpan.FromMinutes(3));
-                Notify(I18n.T("msg.gdrive_signed_in"));
-                return null;
-            }
-            catch (Exception ex)
-            {
-                Log.Write("gdrive sign in error: " + ex.Message);
-                return ex.Message;
-            }
-        }
-
-        public void GDriveSignOut() { new GDriveClient(Settings).SignOut(); }
-
-        /// <summary>A small test picture goes to the chosen target, to check that everything works.</summary>
-        public void UploadTestImage()
-        {
-            using (Bitmap b = new Bitmap(320, 120))
-            using (Graphics g = Graphics.FromImage(b))
-            {
-                g.Clear(Color.FromArgb(45, 140, 255));
-                using (System.Drawing.Font f = new System.Drawing.Font("Segoe UI", 22, System.Drawing.FontStyle.Bold))
-                    g.DrawString("SNAPter test", f, Brushes.White, 20, 36);
-                UploadBitmap(b);
-            }
-        }
-
-        private void SaveAs(Bitmap bmp)
-        {
-            string folder = Environment.ExpandEnvironmentVariables(Settings.SaveFolder);
-            try { Directory.CreateDirectory(folder); } catch { }
-            using (System.Windows.Forms.SaveFileDialog d = new System.Windows.Forms.SaveFileDialog())
-            {
-                d.Filter = "PNG|*.png|JPG|*.jpg|WebP|*.webp|BMP|*.bmp";
-                d.FilterIndex = Math.Max(0, Array.IndexOf(ImageOutput.Formats, ImageOutput.NormalizeFormat(Settings.Format))) + 1;
-                if (Settings.RememberFolder && !string.IsNullOrEmpty(Settings.LastFolder) && Directory.Exists(Settings.LastFolder)) folder = Settings.LastFolder; // the folder of the last "Save as"
-                d.InitialDirectory = folder;
-                string name = ImageOutput.ExpandTemplate(Settings.FileNameTemplate, DateTime.Now);
-                foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
-                d.FileName = name;
-                d.AddExtension = true;
-                if (d.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
-                ImageOutput.SaveTo(bmp, d.FileName, Settings);
-                Notify(I18n.T("msg.saved_to", d.FileName));
-                Log.Write("region saved as " + d.FileName);
-                AfterSaved(bmp, d.FileName);
-                if (Settings.RememberFolder)
-                {
-                    string dir = Path.GetDirectoryName(d.FileName);
-                    try { Settings.PatchUser(r => { Settings.Section(r, "state")["last_folder"] = dir; }); Settings.LastFolder = dir; }
-                    catch (Exception ex) { Log.Write("last folder save error: " + ex.Message); }
-                }
-            }
-        }
-
         private Rectangle FullscreenBounds()
         {
             switch (Settings.FullscreenScope)
@@ -795,7 +697,7 @@ namespace Snapter
                 using (Bitmap shot = ScreenCapture.Capture(FullscreenBounds(), Settings.IncludeCursor))
                 {
                     string path = ImageOutput.Save(shot, Settings, true);
-                    Notify(I18n.T("msg.saved_to", path));
+                    Notify(I18n.T("msg.saved_to", path), false, path);
                     Log.Write("fullscreen saved " + path);
                     AfterSaved(shot, path);
                     if (Settings.UploadAuto && UploadService.Enabled(Settings)) UploadBitmap(shot);

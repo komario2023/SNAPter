@@ -16,11 +16,13 @@ namespace Snapter
         private readonly NotifyIcon _notify = new NotifyIcon();
         private Icon _icon;
         private IntPtr _hIcon = IntPtr.Zero;
+        private string _balloonPath;   // a click on the message opens Explorer with this file selected
 
         public TrayService(AppController app)
         {
             _app = app;
             _notify.Visible = true;
+            _notify.BalloonTipClicked += delegate { OpenBalloonPath(); };
             // one left click, like Lightshot (what it does is the setting ui.tray_click: region | menu | none)
             _notify.MouseClick += delegate (object s, MouseEventArgs e)
             {
@@ -172,8 +174,9 @@ namespace Snapter
 
         /// <summary>The message near the clock. It is always silent (NIIF_NOSOUND): Windows would play its own notification sound on top of the
         /// program sound (Settings - After a capture), which gave two sounds. The program plays the one the user chose, or none.</summary>
-        public void Balloon(string title, string text, int ms = 3000)
+        public void Balloon(string title, string text, int ms = 3000, string openPath = null)
         {
+            _balloonPath = openPath;
             try
             {
                 const int NIM_MODIFY = 1, NIF_INFO = 0x10, NIIF_INFO = 1, NIIF_NOSOUND = 0x10;
@@ -194,6 +197,18 @@ namespace Snapter
             }
             catch (Exception ex) { Log.Write("silent balloon error: " + ex.Message); }
             try { _notify.ShowBalloonTip(ms, title, text, ToolTipIcon.Info); } catch { }
+        }
+
+        private void OpenBalloonPath()
+        {
+            string p = _balloonPath;
+            if (string.IsNullOrEmpty(p)) return;
+            try
+            {
+                if (System.IO.File.Exists(p)) Process.Start(new ProcessStartInfo("explorer.exe", "/select,\"" + p + "\"") { UseShellExecute = true });
+                else if (System.IO.Directory.Exists(p)) Process.Start(new ProcessStartInfo("explorer.exe", "\"" + p + "\"") { UseShellExecute = true });
+            }
+            catch (Exception ex) { Log.Write("open from message error: " + ex.Message); }
         }
 
         private string ThemeLabel(string id)

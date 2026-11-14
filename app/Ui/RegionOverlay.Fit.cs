@@ -137,20 +137,24 @@ namespace Snapter
             }
 
             // actions: "copy", "save", "actions2" (the rest), "close" - each can be left out of the layout (Ctrl+C, Ctrl+S and Esc do the same)
-            StackPanel actCopy = Hst(MakeButton(_i18n.T("actions.copy"), true, DoCopy));
-            StackPanel actSave = Hst(MakeButton(_i18n.T("actions.save"), false, DoSave));
+            Border copyBtn = MakeButton(_i18n.T("actions.copy"), true, DoCopy);
+            copyBtn.ToolTip = WithKey(_i18n.T("actions.copy"), "copy");
+            Border saveBtn = MakeButton(_i18n.T("actions.save"), false, DoSave);
+            saveBtn.ToolTip = WithKey(_i18n.T("actions.save"), "save");
+            StackPanel actCopy = Hst(copyBtn);
+            StackPanel actSave = Hst(saveBtn);
             StackPanel act2 = new StackPanel { Orientation = Orientation.Horizontal };
             Border saveAs = MakeButton(_i18n.T("actions.save_as"), false, DoSaveAs);
-            saveAs.ToolTip = _i18n.T("actions.save_as") + " (Ctrl+Shift+S)";
+            saveAs.ToolTip = WithKey(_i18n.T("actions.save_as"), "save_as");
             act2.Children.Add(saveAs);
             Border pin = MakeButton(_i18n.T("actions.pin"), false, DoPin);
-            pin.ToolTip = _i18n.T("actions.pin") + " (Ctrl+P)";
+            pin.ToolTip = WithKey(_i18n.T("actions.pin"), "pin");
             act2.Children.Add(pin);
             if (_editor) { _beautifyBtn = MakeButton(_i18n.T("actions.beautify"), false, ToggleBeautify); HookBeautifyLongPress(_beautifyBtn); _beautifyBtn.ToolTip = _i18n.T("tip.beautify"); act2.Children.Add(_beautifyBtn); UpdateBeautifyButton(); }
             if (UploadService.Enabled(_settings))
             {
                 Border up = MakeButton(_i18n.T("actions.upload"), false, DoUpload);
-                up.ToolTip = _i18n.T("actions.upload") + " (Ctrl+U)";
+                up.ToolTip = WithKey(_i18n.T("actions.upload"), "upload");
                 act2.Children.Add(up);
             }
             if (_settings.RecordEditorButtons && _editor)
