@@ -48,9 +48,7 @@ namespace Snapter
             string folder = Environment.ExpandEnvironmentVariables(s.UploadFolderPath ?? "");
             if (string.IsNullOrWhiteSpace(folder)) return new UploadResult { Ok = false, Message = "upload folder is not set" };
             Directory.CreateDirectory(folder);
-            string path = System.IO.Path.Combine(folder, fileName);
-            string stem = System.IO.Path.GetFileNameWithoutExtension(fileName), ext = System.IO.Path.GetExtension(fileName);
-            for (int n = 2; File.Exists(path); n++) path = System.IO.Path.Combine(folder, stem + "_" + n + ext);
+            string path = ImageOutput.UniquePath(folder, System.IO.Path.GetFileNameWithoutExtension(fileName), System.IO.Path.GetExtension(fileName));
             File.WriteAllBytes(path, data);
             return new UploadResult { Ok = true, Path = path };
         }

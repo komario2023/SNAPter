@@ -73,13 +73,7 @@ namespace Snapter
 
             string ext = "." + FormatFor(settings, fullscreen);
 
-            string path = Path.Combine(folder, name + ext);
-            int n = 2;
-            while (File.Exists(path))
-            {
-                path = Path.Combine(folder, name + "_" + n + ext);
-                n++;
-            }
+            string path = UniquePath(folder, name, ext);
 
             SaveTo(bmp, path, settings);
             return path;
@@ -170,6 +164,29 @@ namespace Snapter
         /// <summary>Title and program of the window that was active when the capture started (tokens {window} and {process}).</summary>
         public static string WindowTitle = "";
         public static string ProcessName = "";
+
+        /// <summary>The path folder + name + ext; when such a file exists: "name 2", "name 3", "name 4"... (a space and a number, the first free one).
+        /// A file is never overwritten by a save that did not ask for it.</summary>
+        public static string UniquePath(string folder, string name, string ext)
+        {
+            string path = Path.Combine(folder, name + ext);
+            for (int n = 2; File.Exists(path); n++) path = Path.Combine(folder, name + " " + n + ext);
+            return path;
+        }
+
+        /// <summary>The same for a name without the folder part, for a "Save as" dialog: the first name that is free in the folder.</summary>
+        public static string UniqueName(string folder, string name, string ext)
+        {
+            return Path.GetFileNameWithoutExtension(UniquePath(folder, name, ext));
+        }
+
+        /// <summary>Ready file name templates for the list in Settings - Saving, from the shortest to the fullest: time, date, short date, date + time,
+        /// short date + time, then the same with seconds (a colon is not allowed in a Windows file name, so the time uses a hyphen).</summary>
+        public static readonly string[] NamePresets =
+        {
+            "{HH-mm}", "{dd.MM}", "{dd.MM.yy}", "{dd.MM} {HH-mm}", "{dd.MM.yy} {HH-mm}",
+            "{HH-mm-ss}", "{dd.MM} {HH-mm-ss}", "{dd.MM.yy} {HH-mm-ss}"
+        };
 
         public static string ExpandTemplate(string template, DateTime now)
         {

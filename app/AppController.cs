@@ -637,9 +637,7 @@ namespace Snapter
             Directory.CreateDirectory(folder);
             string name = ImageOutput.ExpandTemplate(Settings.FileNameTemplate, DateTime.Now);
             foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
-            string path = Path.Combine(folder, name + ext);
-            for (int n = 2; File.Exists(path); n++) path = Path.Combine(folder, name + "_" + n + ext);
-            return path;
+            return ImageOutput.UniquePath(folder, name, ext);
         }
 
         private async void RunScroll(Rectangle rect)

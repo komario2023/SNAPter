@@ -81,6 +81,7 @@ Clipboard and files
 -------------------
 - Clipboard gets PNG and bitmap (pastes into Telegram, Word, Paint, browsers).
 - Files go to %USERPROFILE%\Pictures\SNAPter, name SNAPter_<date>_<time>.png (folder, format and name are configurable).
+- A file is never overwritten: when a name is taken the program adds a space and a number (name 2, name 3...), also for "Save as", recordings and the folder upload. Settings - Saving has a list of ready name templates (time, date, date + time, with or without seconds).
 - Optional upload to a folder, or to Google Drive with a link (the Google Drive part is NOT finished and was not tested well; the folder target works).
 
 Structure

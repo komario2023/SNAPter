@@ -100,7 +100,8 @@ namespace Snapter
                 d.InitialDirectory = folder;
                 string name = ImageOutput.ExpandTemplate(Settings.FileNameTemplate, DateTime.Now);
                 foreach (char c in Path.GetInvalidFileNameChars()) name = name.Replace(c, '_');
-                d.FileName = name;
+                // the suggested name is the first free one in the folder (a repeated name gets " 2", " 3"...): it never offers to overwrite the last file
+                d.FileName = ImageOutput.UniqueName(d.InitialDirectory, name, "." + ImageOutput.NormalizeFormat(Settings.Format));
                 d.AddExtension = true;
                 if (d.ShowDialog(owner) != System.Windows.Forms.DialogResult.OK) { Log.Write("save as: cancelled"); return; }
                 ImageOutput.SaveTo(bmp, d.FileName, Settings);

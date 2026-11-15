@@ -364,8 +364,23 @@ namespace Snapter
                 }
             }));
             sv.Children.Add(Row(_i.T("settings.save_folder"), folderRow));
-            TextBox name = Input(_s.FileNameTemplate, 420);
-            sv.Children.Add(Row(_i.T("settings.file_name"), name));
+            TextBox name = Input(_s.FileNameTemplate, 210);
+            // ready templates, from the shortest to the fullest: a choice puts the template into the field (the example is the time right now)
+            Val<string> namePick = new Val<string>();
+            List<string> nameItems = new List<string>();
+            for (int pi = 0; pi < ImageOutput.NamePresets.Length; pi++)
+                nameItems.Add(_i.T("settings.name_preset." + pi) + "   -   " + ImageOutput.ExpandTemplate(ImageOutput.NamePresets[pi], DateTime.Now));
+            FrameworkElement nameList = DropDown(namePick, () => nameItems, 300, _i.T("settings.name_presets"), delegate
+            {
+                int ix = nameItems.IndexOf(namePick.V);
+                if (ix >= 0) name.Text = ImageOutput.NamePresets[ix];
+            });
+            StackPanel nameRow = new StackPanel { Orientation = Orientation.Horizontal };
+            nameRow.Children.Add(name);
+            ((FrameworkElement)nameList).Margin = new Thickness(10, 0, 0, 0);
+            nameRow.Children.Add(nameList);
+            sv.Children.Add(Row(_i.T("settings.file_name"), nameRow));
+            sv.Children.Add(Hint(_i.T("settings.name_unique_hint")));
             Val<string> fmt = new Val<string> { V = ImageOutput.NormalizeFormat(_s.Format) };
             List<string> fmtVals = new List<string>(ImageOutput.Formats);
             List<string> fmtLabels = new List<string> { "PNG", "JPG", "WebP", "BMP" };

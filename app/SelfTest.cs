@@ -98,6 +98,13 @@ namespace Snapter
                         Check(back.Width == shot.Width && back.Height == shot.Height, "saved PNG has the same size (" + Path.GetFileName(path) + ", " + new FileInfo(path).Length + " bytes)");
                     string path2 = ImageOutput.Save(shot, tmp);
                     Check(path != path2, "second save gets a new name (" + Path.GetFileName(path2) + ")");
+                    // the same name again: a space and a number, never an overwrite
+                    tmp.FileNameTemplate = "Img_";
+                    string u1 = ImageOutput.Save(shot, tmp), u2 = ImageOutput.Save(shot, tmp), u3 = ImageOutput.Save(shot, tmp);
+                    Check(Path.GetFileName(u1) == "Img_.png" && Path.GetFileName(u2) == "Img_ 2.png" && Path.GetFileName(u3) == "Img_ 3.png", "a taken name gets a space and a number: " + Path.GetFileName(u1) + ", " + Path.GetFileName(u2) + ", " + Path.GetFileName(u3));
+                    Check(ImageOutput.UniqueName(dir, "Img_", ".png") == "Img_ 4" && ImageOutput.UniqueName(dir, "free", ".png") == "free", "the name offered by 'Save as' is the first free one");
+                    DateTime stamp = new DateTime(2026, 11, 15, 3, 58, 59);
+                    Check(ImageOutput.ExpandTemplate(ImageOutput.NamePresets[0], stamp) == "03-58" && ImageOutput.ExpandTemplate(ImageOutput.NamePresets[4], stamp) == "15.11.26 03-58" && ImageOutput.ExpandTemplate(ImageOutput.NamePresets[7], stamp) == "15.11.26 03-58-59" && ImageOutput.NamePresets.Length == 8, "the ready name templates give 03-58, 15.11.26 03-58, 15.11.26 03-58-59");
 
                     // formats: png, jpg (quality), webp (lossy and lossless), bmp, separate format for the whole screen
                     using (Bitmap small = shot.Clone(new Rectangle(0, 0, Math.Min(600, shot.Width), Math.Min(400, shot.Height)), shot.PixelFormat))
