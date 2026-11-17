@@ -695,8 +695,12 @@ namespace Snapter
                     HidePanels(); _canvas.CaptureMouse(); return;
                 }
 
-                if (SelContains(p))
+                // a drawing tool keeps working when the press is OUTSIDE the region: the object is clipped by the region and the region itself never changes
+                // (to change the region, pick the select tool - the top one - and drag the frame; with it a press outside starts a new region as before)
+                bool pressInside = SelContains(p);
+                if (pressInside || (_editor && _tool != EditorTool.Select))
                 {
+                    if (!pressInside && (_tool == EditorTool.Fill || _tool == EditorTool.Steps || _tool == EditorTool.Text)) return;   // a click outside has nothing to fill, number or write
                     if (_tool == EditorTool.Select)
                     {
                         Annotation hit = HitAnnotation(p);

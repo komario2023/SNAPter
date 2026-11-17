@@ -105,6 +105,26 @@ namespace Snapter
             st.FitEnabled = true;
             ov.TestSetSelection(new Rect(100, 100, 400, 300));
             RatioTest(ov);                                           // aspect ratios on Tab (SelfTest.Ratio.cs)
+
+            // a drawing tool pressed OUTSIDE the region never starts a new region; the select tool does
+            ov.TestSetSelection(new Rect(work.X + 400, work.Y + 300, 500, 300));
+            Rect keep = ov.TestSel; int tested = 0; bool allKept = true;
+            foreach (EditorTool t in new EditorTool[] { EditorTool.Arrow, EditorTool.Line, EditorTool.Rect, EditorTool.Ellipse, EditorTool.Brush, EditorTool.Marker, EditorTool.Blur, EditorTool.Eraser, EditorTool.Spotlight, EditorTool.Magnifier, EditorTool.Text, EditorTool.Steps, EditorTool.Fill })
+            {
+                ov.TestSetTool(t);
+                if (ov.TestTool != t) continue;                        // a tool that is switched off in these settings
+                tested++;
+                ov.TestDown(new Point(work.X + 150, work.Y + 500), 1);
+                ov.TestMove(new Point(work.X + 600, work.Y + 450), System.Windows.Input.ModifierKeys.None);
+                ov.TestUp();
+                if (ov.TestSel != keep) allKept = false;
+            }
+            Check(tested >= 4 && allKept, "a drawing tool pressed outside the region leaves the region as it was (" + tested + " tools tried)");
+            ov.TestSetTool(EditorTool.Select);
+            ov.TestDown(new Point(work.X + 150, work.Y + 500), 1);
+            ov.TestMove(new Point(work.X + 300, work.Y + 600), System.Windows.Input.ModifierKeys.None);
+            ov.TestUp();
+            Check(ov.TestSel != keep, "the select tool pressed outside the region draws a new one, as before");
         }
     }
 }
