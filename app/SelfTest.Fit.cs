@@ -125,6 +125,21 @@ namespace Snapter
             ov.TestMove(new Point(work.X + 300, work.Y + 600), System.Windows.Input.ModifierKeys.None);
             ov.TestUp();
             Check(ov.TestSel != keep, "the select tool pressed outside the region draws a new one, as before");
+
+            // an arrow that starts outside the region is shown WHOLE while it is drawn; the region cuts it only when the mouse is released
+            ov.TestSetSelection(new Rect(work.X + 400, work.Y + 300, 500, 300));
+            ov.TestSetTool(EditorTool.Arrow);
+            int before = ov.TestItemCount;
+            ov.TestDown(new Point(work.X + 150, work.Y + 400), 1);
+            ov.TestMove(new Point(work.X + 650, work.Y + 450), System.Windows.Input.ModifierKeys.None);
+            ArrowAnnotation drawn = ov.TestLastItem as ArrowAnnotation;
+            Check(drawn != null && drawn.A.X < ov.TestSel.Left - 100 && ov.TestAnnoUnclipped, "while it is drawn the arrow keeps its true start outside the region and is not cut");
+            ov.TestUp();
+            Check(ov.TestItemCount == before + 1 && !ov.TestAnnoUnclipped, "after the release the arrow stays and the region cuts the drawing again");
+            ov.TestDown(new Point(work.X + 50, work.Y + 50), 1);
+            ov.TestMove(new Point(work.X + 300, work.Y + 80), System.Windows.Input.ModifierKeys.None);
+            ov.TestUp();
+            Check(ov.TestItemCount == before + 1, "an arrow drawn completely outside the region is dropped (it would show nothing)");
         }
     }
 }

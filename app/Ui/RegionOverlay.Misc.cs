@@ -488,6 +488,7 @@ namespace Snapter
         internal void TestCycleOpacity() { CycleOpacity(); }
         internal int TestPresetButtons { get { return _presetButtons.Count; } }
         internal void TestDeselect() { Select(null); }
+        internal bool TestAnnoUnclipped { get { return _annoLive.Children.Count > 0; } }
         internal Annotation TestLastItem { get { return _items.Count > 0 ? _items[_items.Count - 1] : null; } }
         internal void TestSetPreset(int i) { SetPreset(i); }
         internal ToolStyle TestStyle(EditorTool t) { return _styles.Current(t); }

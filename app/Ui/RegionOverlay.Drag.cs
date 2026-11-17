@@ -167,10 +167,10 @@ namespace Snapter
                     {
                         RectAnnotation ra = _selected as RectAnnotation;
                         if (ra == null) break;
-                        Point q = ClampToSel(c);
+                        Point q = Clamp(c);
                         Point a = new Point(_rectAnchor.X, _rectAnchor.Y);
-                        // a square or a circle, from the center - never beyond the region
-                        ra.R = DragRectBlend(a, q, constrain ? _strConstrain / 100 : 0, center ? _strCenter / 100 : 0, _sel);
+                        // a square or a circle, from the center - the whole shape is shown, also outside the region (the region cuts it when the mouse is released)
+                        ra.R = DragRectBlend(a, q, constrain ? _strConstrain / 100 : 0, center ? _strCenter / 100 : 0, new Rect(0, 0, _canvas.Width, _canvas.Height));
                         ShapeAnnotation sh = ra as ShapeAnnotation;
                         if (sh != null)
                         {
@@ -186,14 +186,14 @@ namespace Snapter
                     {
                         BrushAnnotation br = _selected as BrushAnnotation;
                         if (br == null) break;
-                        Point q = ClampToSel(c);
+                        Point q = Clamp(c);
                         if (constrain || acts.Contains("axis"))
                         {
                             // a straight line: 45 degree steps, or only horizontal / vertical
                             br.Pts.Clear();
                             br.Pts.Add(_brushFirst);
                             Point snappedQ = acts.Contains("axis") ? Lerp(q, SnapAxis(_brushFirst, q), _strAxis / 100) : Lerp(q, SnapAngle(_brushFirst, q), _strConstrain / 100);
-                            br.Pts.Add(ClampToSel(snappedQ));
+                            br.Pts.Add(Clamp(snappedQ));
                         }
                         else
                         {
@@ -237,17 +237,19 @@ namespace Snapter
                     {
                         ArrowAnnotation a = _selected as ArrowAnnotation;
                         if (a == null) break;
-                        Point q = ClampToSel(c);
+                        // a new arrow may go anywhere on the screen (it is shown whole, the region cuts it on release); moving the end of an old one stays inside the region
+                        Func<Point, Point> lim = _mode == DragMode.DrawArrow ? (Func<Point, Point>)Clamp : ClampToSel;
+                        Point q = lim(c);
                         int moving = (_mode == DragMode.DrawArrow) ? 1 : _endIndex;
                         Point fixedEnd = (moving == 1) ? a.A : a.B;
-                        if (acts.Contains("axis")) q = ClampToSel(Lerp(q, SnapAxis(fixedEnd, q), _strAxis / 100));
-                        else if (constrain) q = ClampToSel(Lerp(q, SnapAngle(fixedEnd, q), _strConstrain / 100));
+                        if (acts.Contains("axis")) q = lim(Lerp(q, SnapAxis(fixedEnd, q), _strAxis / 100));
+                        else if (constrain) q = lim(Lerp(q, SnapAngle(fixedEnd, q), _strConstrain / 100));
                         if (center && _mode == DragMode.DrawArrow)
                         {
                             // from the center (as far as the strength says): the first point is the middle of the arrow at 100%
                             Point mid = _brushFirst;
                             double tc = _strCenter / 100;
-                            a.A = ClampToSel(new Point(mid.X - (q.X - mid.X) * tc, mid.Y - (q.Y - mid.Y) * tc));
+                            a.A = lim(new Point(mid.X - (q.X - mid.X) * tc, mid.Y - (q.Y - mid.Y) * tc));
                             a.B = q;
                         }
                         else if (moving == 1) a.B = q; else a.A = q;
@@ -268,6 +270,7 @@ namespace Snapter
             UpdatePointerAids(_lastPt); // the loupe and the crosshair go away once a region exists
             ClearGuides();
             if (_modMax != ModifierKeys.None) _modOther = true; // a key held across the end of the drawing is not a tap either
+            if (was == DragMode.DrawArrow || was == DragMode.DrawRect || was == DragMode.DrawBrush) RebuildAnnotations();   // the region cuts the drawing again
 
             if (was == DragMode.Erase)
             {
@@ -303,7 +306,7 @@ namespace Snapter
             if (was == DragMode.DrawRect)
             {
                 RectAnnotation ra = _selected as RectAnnotation;
-                if (ra != null && (ra.R.Width < 3 || ra.R.Height < 3))
+                if (ra != null && (ra.R.Width < 3 || ra.R.Height < 3 || OutsideRegion(ra)))
                 {
                     _items.RemoveAll(x => x.Id == ra.Id);
                     _selected = null;
@@ -315,14 +318,16 @@ namespace Snapter
             }
             if (was == DragMode.DrawBrush)
             {
-                Commit();
+                BrushAnnotation bs = _selected as BrushAnnotation;
+                if (bs != null && OutsideRegion(bs)) { _items.RemoveAll(x => x.Id == bs.Id); _selected = null; RebuildAnnotations(); }
+                else Commit();
                 RefreshPanels();
                 return;
             }
             if (was == DragMode.DrawArrow)
             {
                 ArrowAnnotation a = _selected as ArrowAnnotation;
-                if (a != null && a.Length < 6)
+                if (a != null && (a.Length < 6 || OutsideRegion(a)))
                 {
                     _items.RemoveAll(x => x.Id == a.Id);
                     _selected = null;

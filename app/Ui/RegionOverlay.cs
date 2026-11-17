@@ -58,6 +58,7 @@ namespace Snapter
         private readonly Image _image = new Image();
         private readonly Path _dim = new Path();
         private readonly Canvas _annoLayer = new Canvas();
+        private readonly Canvas _annoLive = new Canvas();     // the object that is being drawn right now: shown whole (also outside the region), above the clipped rest
         private readonly Canvas _chrome = new Canvas();
         private readonly Rectangle _frame = new Rectangle();
         private readonly Rectangle[] _handles = new Rectangle[8];
@@ -245,6 +246,10 @@ namespace Snapter
             _annoLayer.Height = bounds.Height;
             _annoLayer.IsHitTestVisible = false;
             _canvas.Children.Add(_annoLayer);
+            _annoLive.Width = bounds.Width;
+            _annoLive.Height = bounds.Height;
+            _annoLive.IsHitTestVisible = false;
+            _canvas.Children.Add(_annoLive);
 
             WpfColor frameColor = _theme.Accent;
             if (!string.Equals(settings.FrameColor, "accent", StringComparison.OrdinalIgnoreCase))

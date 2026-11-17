@@ -457,6 +457,24 @@ namespace Snapter
         }
 
         // ================= drawing of the frame =================
+        /// <summary>True while an arrow, a shape or a brush stroke is being drawn: it is shown WHOLE, also the part outside the region.</summary>
+        private bool DrawingOutside { get { return _mode == DragMode.DrawArrow || _mode == DragMode.DrawRect || _mode == DragMode.DrawBrush; } }
+
+        /// <summary>The drawings are cut by the region. The object being drawn lives in its own layer (_annoLive) and is not cut until the mouse is released.</summary>
+        private void UpdateAnnoClip()
+        {
+            bool has = _hasSel && _sel.Width > 0 && _sel.Height > 0;
+            double rr = has && _regionRounded ? RegionRadius() : 0;
+            _annoLayer.Clip = has ? new RectangleGeometry(_sel, rr, rr) : new RectangleGeometry(new Rect(0, 0, 0, 0));
+        }
+
+        /// <summary>An object that lies completely outside the region shows nothing: it is dropped when the mouse is released.</summary>
+        private bool OutsideRegion(Annotation a)
+        {
+            Rect b = a.Bounds();
+            return !b.IsEmpty && !_sel.IntersectsWith(b);
+        }
+
         private void UpdateVisuals()
         {
             GeometryGroup g = new GeometryGroup { FillRule = FillRule.EvenOdd };
@@ -466,7 +484,7 @@ namespace Snapter
             if (has) g.Children.Add(new RectangleGeometry(_sel, rr, rr));
             _dim.Data = g;
 
-            _annoLayer.Clip = has ? new RectangleGeometry(_sel, rr, rr) : new RectangleGeometry(new Rect(0, 0, 0, 0));
+            UpdateAnnoClip();
 
             Visibility vis = has ? Visibility.Visible : Visibility.Collapsed;
             _frame.Visibility = vis;
@@ -504,10 +522,13 @@ namespace Snapter
         private void RebuildAnnotations()
         {
             _annoLayer.Children.Clear();
+            _annoLive.Children.Clear();
             foreach (Annotation a in _items)
             {
                 if (a == _editing) continue;
-                _annoLayer.Children.Add(a.BuildVisual());
+                UIElement v = a.BuildVisual();
+                if (DrawingOutside && ReferenceEquals(a, _selected)) _annoLive.Children.Add(v);     // whole, also the part outside the region
+                else _annoLayer.Children.Add(v);
             }
             UpdateChrome();
         }
@@ -667,12 +688,13 @@ namespace Snapter
             ArrowAnnotation a = new ArrowAnnotation();
             a.Head = head;
             ApplyStyle(a, _styles.Current(head ? EditorTool.Arrow : EditorTool.Line));
-            a.A = ClampToSel(p);
+            a.A = Clamp(p);                              // the whole screen, not only the region: the start may be outside it
             a.B = a.A;
             _brushFirst = a.A;
             _items.Add(a);
             _selected = a;
             _mode = DragMode.DrawArrow;
+            UpdateAnnoClip();
             _canvas.CaptureMouse();
             RebuildAnnotations();
         }
@@ -685,12 +707,13 @@ namespace Snapter
             else if (tool == EditorTool.Magnifier) ra = new MagnifierAnnotation();
             else ra = new ShapeAnnotation { Ellipse = tool == EditorTool.Ellipse };
             ApplyStyle(ra, _styles.Current(tool));
-            Point a = ClampToSel(p);
+            Point a = Clamp(p);
             _rectAnchor = new Rect(a, a);
             ra.R = new Rect(a, a);
             _items.Add(ra);
             _selected = ra;
             _mode = DragMode.DrawRect;
+            UpdateAnnoClip();
             _canvas.CaptureMouse();
             RebuildAnnotations();
         }
@@ -699,11 +722,12 @@ namespace Snapter
         {
             BrushAnnotation b = new BrushAnnotation { Marker = marker };
             ApplyStyle(b, _styles.Current(marker ? EditorTool.Marker : EditorTool.Brush));
-            _brushFirst = ClampToSel(p);
+            _brushFirst = Clamp(p);
             b.Pts.Add(_brushFirst);
             _items.Add(b);
             _selected = b;
             _mode = DragMode.DrawBrush;
+            UpdateAnnoClip();
             _canvas.CaptureMouse();
             RebuildAnnotations();
         }

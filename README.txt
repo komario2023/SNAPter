@@ -45,7 +45,7 @@ Selecting a region
 
 Editor
 ------
-Tools: arrow, line, rectangle, ellipse, brush, marker, text, numbered steps, blur, fill, spotlight, magnifier, eraser, picker. A drawing tool also works when you press OUTSIDE the region (the object is clipped by the region and the region does not change); to change the region pick the select tool (the top one) and drag the frame or press outside.
+Tools: arrow, line, rectangle, ellipse, brush, marker, text, numbered steps, blur, fill, spotlight, magnifier, eraser, picker. A drawing tool also works when you press OUTSIDE the region: the object is shown WHOLE while you draw it (also the part outside), the region cuts it when you release, and the region does not change; to change the region pick the select tool (the top one) and drag the frame or press outside.
 Switch tools on and off, change their order and keys. Presets 1-9 for every tool, recent colors, any color with transparency.
 Text stays editable (font, bold, italic, alignment including justify, plate, outline for neural networks), shapes and text rotate,
 several objects can be selected, aligned, moved together. Undo/redo, Ctrl+C copy, Ctrl+S save, Ctrl+Shift+S save as, Ctrl+P pin,
